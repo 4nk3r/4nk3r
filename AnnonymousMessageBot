@@ -1,0 +1,38 @@
+using System.Reflection;
+using Jubi;
+using Jubi.Abstracts;
+using Jubi.Abstracts.Executors;
+using Jubi.Attributes;
+using Jubi.Models;
+using Jubi.Response;
+using Jubi.Response.Attachments.Keyboard;
+using Jubi.Response.Attachments.Keyboard.Parameters;
+using Jubi.Telegram;
+
+namespace AnonMessage.Executors;
+
+public class Executors
+{
+    [Command("start")]
+    public class StartExecutor : CommandExecutor
+    {
+        public override Message? Execute()
+        {
+            var ThisUser = (User as TelegramUser).Username;
+            var keyboard = new InlineMarkupKeyboard();
+            keyboard.AddButton("Назад", () => { User.Send("username"); });
+            keyboard.AddButton("Написать сообщение 👀", () => { User.Read("Отправь юзернейм человека, которому будем писать 😶", Username =>
+            {
+                User.Send(Username);
+            });; });
+            
+            
+            return new Message( "Привет, этот бот предназначен для анонимной отправки сообщений другим пользователям, что бы продолжить - жми кнопку снизу", keyboard);
+        }
+
+        void SendInfoToUserBot()
+        {
+            
+        }
+    }
+}
