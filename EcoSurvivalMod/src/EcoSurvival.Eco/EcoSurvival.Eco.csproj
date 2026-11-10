@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Eco-facing layer. Builds only when EcoReferenceDir points at a folder with the
+    Eco reference assemblies (Eco.Core.dll, Eco.Shared.dll, ...). Without it the
+    project is skipped, so the core library and its tests build on any machine.
+
+    Example:
+      dotnet build src/EcoSurvival.Eco -p:EcoReferenceDir="C:\Program Files (x86)\Steam\steamapps\common\Eco\EcoServer_Data\Managed"
+    or, using the ModKit reference folder after `git lfs pull`:
+      dotnet build src/EcoSurvival.Eco -p:EcoReferenceDir=/path/to/ecomodkit/Examples/ReferenceAssemblies
+  -->
+
+  <PropertyGroup Condition="'$(EcoReferenceDir)' == ''">
+    <BuildEco>false</BuildEco>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(EcoReferenceDir)' != ''">
+    <BuildEco>true</BuildEco>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <RootNamespace>Eco.EcoSurvival</RootNamespace>
+    <AssemblyName>EcoSurvival</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(BuildEco)' == 'true'">
+    <Compile Include="**\*.cs" />
+    <Reference Include="Eco.Core">
+      <HintPath>$(EcoReferenceDir)\Eco.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Eco.Shared">
+      <HintPath>$(EcoReferenceDir)\Eco.Shared.dll</HintPath>
+    </Reference>
+    <ProjectReference Include="..\EcoSurvival.Core\EcoSurvival.Core.csproj" />
+  </ItemGroup>
+
+</Project>
